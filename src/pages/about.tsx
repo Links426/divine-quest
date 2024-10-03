@@ -1,23 +1,26 @@
 import Header from './../components/header'
 import Footer from './../components/footer'
+import Markdown from 'react-markdown'
+
+
 
 export default function About() {
   const qaList = [
     {
-      q: 'iWebsite是什么？',
-      a: '他是一个基于Next.js、Vercel搭建的网站模版，你可以使用它快速、免费的搭建属于自己的网站，利用Next.js不仅对SEO友好，可以基于Vercel的CI/CD自动化部署。',
+      q: '我们是谁？😎',
+      a: '广州大学计算机313实验室，驻足于广州大学实验中心。成立十余年，积累颇丰。',
     },
     {
-      q: '那些人适合用iWebsite？',
-      a: '有一定的Web开发基础，了解HTML、CSS、JavaScript语言特性，对React、Next.js、GitHub、Vercel有一定使用基础。',
+      q: '我们的目标是什么？🎯',
+      a: '作为广州大学实验中心的一员，我们追求极致、务实敢为、开放谦虚，立足于培养人才，和优秀的人，做正确的事！',
     },
     {
-      q: '为什么iWebsite免费？',
-      a: '因为所有的服务都是可以免费使用的（包括GitHub、Vercel等等），我只是教会你如何简单的使用它（前提是你有一定的Web开发基础）。',
+      q: '我们的成果有哪些？🏅️',
+      a: '团队成立至今，国家级奖项十余项，省级奖项二十余项；团队往届成员的去向包括 香港大学、中国科学院大学、字节跳动、美团、滴滴、腾讯、OPPO等。',
     },
     {
-      q: 'iWebsite适合做什么',
-      a: '可以做很多事情，比如用作企业官网、个人博客、毕业设计、或者仅仅出于兴趣爱好。',
+      q: '怎么联系我们？📮',
+      a: '有任何的疑问（诸如加入、合作、参观等）都可以联系邮箱：links426@e.gzhu.edu.cn',
     },
   ]
   return (

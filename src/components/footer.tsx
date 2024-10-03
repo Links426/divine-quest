@@ -5,7 +5,7 @@ export default function Footer() {
         <div className="flex flex-col sm:flex-row gap-4 justify-between ">
           <div className="">
             <h4 className="font-medium mb-4 text-sm dark:text-gray-50">
-              Copyright © {new Date().getFullYear()} 313. All rights reserved.
+              Copyright © {new Date().getFullYear()} 📮 links426@e.gzhu.edu.cn
             </h4>
             <a
               className="text-gray-500 text-sm block mb-2 hover:text-gray-600 transition-colors duration-200"

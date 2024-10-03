@@ -1,7 +1,6 @@
 import Header from './../components/header'
 import Footer from './../components/footer'
 import Image from 'next/image'
-
 export default function Index() {
   const list = [
     {
@@ -28,7 +27,7 @@ export default function Index() {
       <div>
         <div className="max-w-7xl mx-auto px-4 py-2 h-96 ">
           <div className="relative h-full">
-            <Image src="/banner.jpeg" alt="Banner" layout="fill" objectFit="cover" quality={100} />
+            <Image src="/144178363.jpg" alt="Banner" layout="fill" objectFit="cover" quality={100} />
             <div className="absolute top-0 left-0 w-full h-full bg-black opacity-50"></div>
             <div className="absolute top-0 left-0 w-full h-full flex items-center justify-center">
               <div className="text-center">
@@ -38,7 +37,7 @@ export default function Index() {
                 <a
                   href="https://github.com/AnsonZnl/iWebsite"
                   className="text-gray bg-blue-500 hover:bg-blue-600 mx-2 px-3 py-2 rounded-md text-sm font-medium"
-                >
+                >co
                   Get Start
                 </a>
               </p> */}
