@@ -4,6 +4,14 @@ export const router = [
     path: '/',
   },
   {
+    name: 'fortune',
+    path: '/fortune',
+  },
+  {
+    name: 'naming',
+    path: '/naming',
+  },
+  {
     name: 'about',
     path: '/about',
   },

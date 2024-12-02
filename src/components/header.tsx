@@ -3,7 +3,6 @@ import IwsLink from './IwsLink'
 import { useState } from 'react'
 import { useRouter } from 'next/router'
 import { router as routerList } from './../router'
-import { ModeToggle } from '@/components/mode-toggle'
 
 export default function Header() {
   const router = useRouter()
@@ -11,83 +10,100 @@ export default function Header() {
   const currentRouter = routerList.find((e) => e.path === router.asPath)?.name
 
   return (
-    <nav className="bg-gray-100  border-y border-gray-200 dark:bg-slate-800 dark:border-gray-600">
+    <nav className="bg-white/80 backdrop-blur-md shadow-md sticky top-0 z-50">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div className="flex justify-between h-16">
-          {/* 左侧 logo */}
+        <div className="flex justify-between items-center h-16">
+          {/* Logo区域 */}
           <div className="flex-shrink-0 flex items-center">
-            <IwsLink href="/" className='mt-1'>
+            <IwsLink href="/" className="flex items-center space-x-2">
               <Image
-                className="block w-auto cursor-pointer"
-                height={60}
-                width={60}
+                className="w-auto h-8"
+                height={32}
+                width={32}
                 src="/logo.png"
                 alt="Logo"
               />
+              <span className="text-xl font-bold text-purple-600">AI命理大师</span>
             </IwsLink>
-            {/* <div className='font-bold'>广州大学 313 实验室</div> */}
           </div>
-          {/* 右侧导航 */}
-          <div className="hidden md:block">
-            <div className="ml-10 flex items-center space-x-4 h-16">
-              <IwsLink
-                href="/"
-                className={`text-gray-600 dark:text-gray-100 hover:bg-gray-200 hover:dark:bg-gray-500 ${currentRouter === 'home' ? 'bg-gray-200 dark:text-gray-100 dark:bg-gray-500' : ''
-                  } px-3 py-2 rounded-md text-sm font-medium`}
-              >
-                首页
-              </IwsLink>
-              <IwsLink
-                href="/about"
-                className={`text-gray-600 dark:text-gray-100 hover:bg-gray-200 hover:dark:bg-gray-500 ${currentRouter === 'about' ? 'bg-gray-200 dark:text-gray-100 dark:bg-gray-500' : ''
-                  } px-3 py-2 rounded-md text-sm font-medium`}
-              >
-                关于我们
-              </IwsLink>
 
-              <ModeToggle />
-            </div>
-          </div>
-          {/* 移动端折叠导航 */}
-          <div className="-mr-2 flex items-center md:hidden">
-            <button
-              type="button"
-              className="bg-gray-200 dark:bg-gray-500 hover:dark:bg-gray-500 inline-flex items-center justify-center p-2 rounded-md text-gray-600 dark:text-gray-100 hover:bg-gray-300 focus:outline-none focus:bg-gray-300 transition duration-150 ease-in-out"
-              aria-controls="mobile-menu"
-              onClick={() => setIsOpen(!isOpen)}
+          {/* 桌面端导航 */}
+          <div className="hidden md:flex items-center space-x-4">
+            <IwsLink
+              href="/"
+              className={`nav-link ${currentRouter === 'home' ? 'active' : ''}`}
             >
-              <span className="sr-only">Open main menu</span>
-              {/* Heroicon name: menu */}
-              <svg className="h-6 w-6" stroke="currentColor" fill="none" viewBox="0 0 24 24">
-                <path
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                  strokeWidth="2"
-                  d="M4 6h16M4 12h16M4 18h16"
-                ></path>
+              命理分析
+            </IwsLink>
+            <IwsLink
+              href="/about"
+              className={`nav-link ${currentRouter === 'about' ? 'active' : ''}`}
+            >
+              关于我们
+            </IwsLink>
+          </div>
+
+          {/* 移动端菜单按钮 */}
+          <div className="md:hidden flex items-center">
+            <button
+              onClick={() => setIsOpen(!isOpen)}
+              className="text-gray-500 hover:text-gray-600"
+            >
+              <span className="sr-only">打开菜单</span>
+              <svg
+                className="h-6 w-6"
+                fill="none"
+                viewBox="0 0 24 24"
+                stroke="currentColor"
+              >
+                {isOpen ? (
+                  <path
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    strokeWidth={2}
+                    d="M6 18L18 6M6 6l12 12"
+                  />
+                ) : (
+                  <path
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    strokeWidth={2}
+                    d="M4 6h16M4 12h16M4 18h16"
+                  />
+                )}
               </svg>
             </button>
           </div>
         </div>
       </div>
-      {/* 移动端折叠菜单 */}
-      <div className={`md:hidden ${isOpen ? '' : 'hidden'}`} id="mobile-menu">
-        <div className="px-2 pt-2 pb-3 sm:px-3">
+
+      {/* 移动端菜单 */}
+      <div className={`md:hidden ${isOpen ? 'block' : 'hidden'}`}>
+        <div className="px-2 pt-2 pb-3 space-y-1">
           <IwsLink
             href="/"
-            className={`block text-gray-600 dark:text-gray-100 hover:bg-gray-200 hover:dark:bg-gray-500 ${currentRouter === 'home' ? 'bg-gray-200 dark:text-gray-100 dark:bg-gray-500' : ''
-              } px-3 py-2 rounded-md text-base font-medium`}
+            className={`mobile-nav-link ${currentRouter === 'home' ? 'active' : ''}`}
           >
-            首页
+            命理分析
+          </IwsLink>
+          <IwsLink
+            href="/fortune"
+            className={`mobile-nav-link ${currentRouter === 'fortune' ? 'active' : ''}`}
+          >
+            今日运势
+          </IwsLink>
+          <IwsLink
+            href="/naming"
+            className={`mobile-nav-link ${currentRouter === 'naming' ? 'active' : ''}`}
+          >
+            智能起名
           </IwsLink>
           <IwsLink
             href="/about"
-            className={`block text-gray-600 dark:text-gray-100 hover:bg-gray-200 hover:dark:bg-gray-500 ${currentRouter === 'about' ? 'bg-gray-200 dark:text-gray-100 dark:bg-gray-500' : ''
-              } px-3 py-2 rounded-md text-base font-medium`}
+            className={`mobile-nav-link ${currentRouter === 'about' ? 'active' : ''}`}
           >
             关于我们
           </IwsLink>
-          <ModeToggle />
         </div>
       </div>
     </nav>

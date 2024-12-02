@@ -1,27 +1,369 @@
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
-* {
-    margin: 0;
-    padding: 0;
+
+@layer components {
+  .nav-link {
+    @apply text-gray-600 hover:text-purple-600 px-3 py-2 rounded-md text-sm font-medium transition-colors;
+  }
+
+  .nav-link.active {
+    @apply text-purple-600 bg-purple-50;
+  }
+
+  .mobile-nav-link {
+    @apply block text-gray-600 hover:text-purple-600 px-3 py-2 rounded-md text-base font-medium;
+  }
+
+  .mobile-nav-link.active {
+    @apply text-purple-600 bg-purple-50;
+  }
 }
-@layer base {
-    h1 {
-        @apply text-2xl;
-    }
-    h2 {
-        @apply text-xl;
-    }
-    h3 {
-        @apply text-lg;
-    }
-    h4 {
-        @apply text-base;
-    }
-    h5 {
-        @apply text-sm;
-    }
-    h6 {
-        @apply text-xs;
-    }
+
+* {
+  margin: 0;
+  padding: 0;
+}
+
+body {
+  @apply bg-gray-50;
+}
+
+/* 自定义滚动条样式 */
+::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+}
+
+::-webkit-scrollbar-track {
+  background: #f1f1f1;
+  border-radius: 4px;
+}
+
+::-webkit-scrollbar-thumb {
+  background: #c4b5fd;
+  border-radius: 4px;
+  transition: all 0.3s ease;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: #9333ea;
+}
+
+/* Firefox 滚动条样式 */
+* {
+  scrollbar-width: thin;
+  scrollbar-color: #c4b5fd #f1f1f1;
+}
+
+.form-group {
+  @apply mb-4;
+}
+
+.form-group label {
+  @apply block text-gray-700 text-sm font-bold mb-2;
+}
+
+.form-group input[type='text'],
+.form-group input[type='email'],
+.form-group input[type='password'],
+.form-group select,
+.form-group textarea {
+  @apply w-full px-3 py-2 border rounded-lg focus:ring-2 focus:ring-purple-500;
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.animate-fade-in {
+  animation: fadeIn 0.6s ease-out forwards;
+}
+
+.animate-fade-in-delay {
+  animation: fadeIn 0.6s ease-out 0.2s forwards;
+  opacity: 0;
+}
+
+.animate-fade-in-delay-2 {
+  animation: fadeIn 0.6s ease-out 0.4s forwards;
+  opacity: 0;
+}
+
+/* Tab 样式优化 */
+.ant-tabs-tab {
+  @apply transition-none !important;
+}
+
+.ant-tabs-tab:hover {
+  @apply text-purple-500 transform-none !important;
+}
+
+.ant-tabs-tab.ant-tabs-tab-active .ant-tabs-tab-btn {
+  @apply text-purple-600 transform-none !important;
+  text-shadow: none;
+}
+
+.ant-tabs-ink-bar {
+  @apply bg-purple-600 !important;
+  height: 2px !important;
+  transition: none !important;
+}
+
+/* 按钮悬浮效果 */
+.feature-card:hover .bg-purple-100 {
+  @apply bg-purple-200;
+}
+
+/* 添加新的动画关键帧 */
+@keyframes blob1 {
+  0%,
+  100% {
+    transform: translate(0, 0) scale(1);
+  }
+  25% {
+    transform: translate(20px, 20px) scale(1.1);
+  }
+  50% {
+    transform: translate(-20px, 20px) scale(0.9);
+  }
+  75% {
+    transform: translate(20px, -20px) scale(1.05);
+  }
+}
+
+@keyframes blob2 {
+  0%,
+  100% {
+    transform: translate(0, 0) scale(1);
+  }
+  25% {
+    transform: translate(-20px, -20px) scale(1.1);
+  }
+  50% {
+    transform: translate(20px, -20px) scale(0.9);
+  }
+  75% {
+    transform: translate(-20px, 20px) scale(1.05);
+  }
+}
+
+@keyframes blob3 {
+  0%,
+  100% {
+    transform: translate(0, 0) scale(1);
+  }
+  25% {
+    transform: translate(20px, -20px) scale(1.1);
+  }
+  50% {
+    transform: translate(-20px, -20px) scale(0.9);
+  }
+  75% {
+    transform: translate(20px, 20px) scale(1.05);
+  }
+}
+
+@keyframes fade-up {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* 添加动画类 */
+.animate-blob1 {
+  animation: blob1 12s infinite ease-in-out;
+}
+
+.animate-blob2 {
+  animation: blob2 12s infinite ease-in-out;
+}
+
+.animate-blob3 {
+  animation: blob3 12s infinite ease-in-out;
+}
+
+.animate-fade-up {
+  animation: fade-up 0.6s ease-out forwards;
+}
+
+.animate-hover {
+  transition: all 0.3s ease;
+}
+
+.delay-200 {
+  animation-delay: 200ms;
+}
+
+/* 玻璃态效果 */
+.glass-tabs {
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+}
+
+/* 改进的Tab样式 */
+.ant-tabs-tab {
+  @apply transition-all duration-300 !important;
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+}
+
+.ant-tabs-tab:hover {
+  @apply text-purple-500 transform scale-105 !important;
+}
+
+.ant-tabs-tab.ant-tabs-tab-active .ant-tabs-tab-btn {
+  @apply text-purple-600 transform scale-105 !important;
+  text-shadow: 0 0 20px rgba(147, 51, 234, 0.3);
+}
+
+/* 卡片悬浮效果增强 */
+.feature-card:hover .bg-purple-100 {
+  @apply bg-purple-200 shadow-lg;
+  transform: scale(1.05);
+}
+
+/* 添加文字阴影效果 */
+.text-shadow {
+  text-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+/* 添加渐变边框效果 */
+.gradient-border {
+  position: relative;
+  background: linear-gradient(to right, #9333ea, #7c3aed);
+  padding: 1px;
+  border-radius: 1rem;
+}
+
+.gradient-border::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  border-radius: 1rem;
+  padding: 1px;
+  background: linear-gradient(to right, #9333ea, #7c3aed);
+  -webkit-mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+  mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+  -webkit-mask-composite: xor;
+  mask-composite: exclude;
+}
+
+/* Tab 切换动画 */
+@keyframes tabEnter {
+  from {
+    opacity: 0;
+    transform: translateY(10px) scale(0.95);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+}
+
+/* 增强 Tab 切换效果 */
+.ant-tabs-content-holder {
+  @apply transition-none;
+}
+
+.ant-tabs-tabpane {
+  @apply transition-none;
+}
+
+.ant-tabs-tabpane-inactive {
+  @apply opacity-0 absolute;
+}
+
+.ant-tabs-tabpane-active {
+  @apply opacity-100 relative;
+}
+
+/* Tab 标签hover效果增强 */
+.ant-tabs-tab {
+  @apply transition-all duration-300 !important;
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+  position: relative;
+  overflow: hidden;
+}
+
+.ant-tabs-tab::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(120deg, transparent, rgba(147, 51, 234, 0.1), transparent);
+  transform: translateX(-100%);
+  transition: transform 0.6s;
+}
+
+.ant-tabs-tab:hover::before {
+  transform: translateX(100%);
+}
+
+/* 活动标签特效 */
+.ant-tabs-tab.ant-tabs-tab-active {
+  @apply relative;
+}
+
+.ant-tabs-tab.ant-tabs-tab-active::after {
+  display: none;
+}
+
+/* Tab 指示器动画增强 */
+.ant-tabs-ink-bar {
+  @apply bg-purple-600 !important;
+  height: 2px !important;
+  transition: none !important;
+}
+
+/* 添加点击波纹效果 */
+.ant-tabs-tab {
+  position: relative;
+  overflow: hidden;
+}
+
+.ant-tabs-tab::after {
+  content: '';
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: 0;
+  height: 0;
+  background: rgba(147, 51, 234, 0.2);
+  border-radius: 50%;
+  transform: translate(-50%, -50%);
+  transition: width 0.6s ease-out, height 0.6s ease-out, opacity 0.6s;
+  opacity: 0;
+}
+
+.ant-tabs-tab:active::after {
+  width: 200px;
+  height: 200px;
+  opacity: 1;
+}
+
+/* 添加打字机光标效果 */
+.typewriter-text {
+  border-right: 2px solid #9333ea;
+  animation: cursor-blink 0.8s step-end infinite;
+}
+
+@keyframes cursor-blink {
+  from, to { border-color: transparent }
+  50% { border-color: #9333ea }
 }
