@@ -657,12 +657,9 @@ export default function Index() {
       <Footer />
       <TypewriterModal
         open={showTypewriter}
-        onClose={() => {
-          if (showTypewriter) {
-            handleTypewriterClose()
-          }
-        }}
+        onClose={handleTypewriterClose}
         content={streamContent}
+        isAnalyzing={!isStreamComplete}
       />
     </div>
   )

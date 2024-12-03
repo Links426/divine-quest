@@ -1,35 +1,110 @@
-import { Modal } from 'antd'
+import { Modal, Button, message } from 'antd'
 import ReactMarkdown from 'react-markdown'
+import html2canvas from 'html2canvas'
+import { useRef } from 'react'
+import { DownloadOutlined } from '@ant-design/icons'
 
 interface TypewriterModalProps {
     open: boolean
     onClose: () => void
     content: string
+    isAnalyzing?: boolean
 }
 
-const TypewriterModal: React.FC<TypewriterModalProps> = ({ open, onClose, content }) => {
+const TypewriterModal: React.FC<TypewriterModalProps> = ({ 
+    open, 
+    onClose, 
+    content,
+    isAnalyzing = false 
+}) => {
+    const contentRef = useRef<HTMLDivElement>(null)
+
+    const handleSaveImage = async () => {
+        if (!contentRef.current || !content) return
+
+        try {
+            message.loading('正在生成图片...', 0)
+            
+            const canvas = await html2canvas(contentRef.current, {
+                backgroundColor: '#F9FAFB',
+                scale: 2,
+                useCORS: true,
+                logging: false,
+            })
+
+            const link = document.createElement('a')
+            link.download = `命理分析结果_${new Date().toLocaleDateString()}.png`
+            link.href = canvas.toDataURL('image/png')
+            link.click()
+            
+            message.destroy()
+            message.success('图片已保存')
+        } catch (error) {
+            message.destroy()
+            message.error('保存失败，请重试')
+            console.error('Save image failed:', error)
+        }
+    }
+
     return (
         <Modal
             title={
-                <div className="flex items-center space-x-2">
-                    <span className="text-lg font-medium">分析结果</span>
+                <div className="flex items-center">
+                    <span className="text-lg font-medium text-purple-800">分析结果</span>
                 </div>
             }
             open={open}
             onCancel={onClose}
-            footer={null}
+            footer={
+                content && !isAnalyzing ? (
+                    <div className="flex justify-center pb-4">
+                        <Button
+                            type="primary"
+                            icon={<DownloadOutlined />}
+                            onClick={handleSaveImage}
+                            className="flex items-center bg-purple-600 hover:bg-purple-700 border-none shadow-md hover:shadow-lg transition-all duration-300 px-6"
+                            size="large"
+                        >
+                            保存为图片
+                        </Button>
+                    </div>
+                ) : null
+            }
             width={800}
             className="typewriter-modal"
+            modalRender={(modal) => (
+                <div className="rounded-lg overflow-hidden shadow-2xl">
+                    {modal}
+                </div>
+            )}
         >
-            <div className="min-h-[400px] p-6 bg-gray-50 rounded-lg">
+            <div 
+                ref={contentRef}
+                className="min-h-[400px] p-8 bg-gradient-to-b from-purple-50 to-white rounded-lg"
+            >
                 {content ? (
                     <div className="prose prose-purple max-w-none">
-                        <ReactMarkdown>{content}</ReactMarkdown>
+                        <div className="mb-6 text-center">
+                            <h1 className="text-2xl font-bold text-purple-800 bg-purple-50 py-2 px-4 rounded-full inline-block shadow-sm">
+                                命理分析报告
+                            </h1>
+                            <div className="text-sm text-gray-500 mt-2">
+                                生成时间：{new Date().toLocaleString()}
+                            </div>
+                        </div>
+                        <div className="bg-white p-6 rounded-lg shadow-sm border border-purple-100">
+                            <ReactMarkdown>{content}</ReactMarkdown>
+                        </div>
+                        <div className="mt-6 text-center text-sm text-gray-400 flex items-center justify-center space-x-2">
+                            <span className="w-12 h-[1px] bg-gray-200"></span>
+                            <span>AI 命理大师生成</span>
+                            <span className="w-12 h-[1px] bg-gray-200"></span>
+                        </div>
                     </div>
                 ) : (
                     <div className="h-full flex flex-col items-center justify-center text-gray-400 space-y-4">
                         <svg
-                            className="w-16 h-16 text-gray-300"
+                            className="w-16 h-16 text-purple-200"
                             fill="none"
                             viewBox="0 0 24 24"
                             stroke="currentColor"
