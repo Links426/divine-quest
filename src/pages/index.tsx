@@ -94,7 +94,6 @@ export default function Index() {
       if (!response.ok) {
         throw new Error('Analysis failed')
       }
-
       if (response.body) {
         setShowTypewriter(true)
         handleStreamData(response.body)
@@ -104,7 +103,6 @@ export default function Index() {
       console.error('Analysis failed:', error)
       message.error('分析失败，请稍后重试')
     } finally {
-      setLoading(false)
     }
   }
 
@@ -140,7 +138,12 @@ export default function Index() {
         }
         const chunk = decoder.decode(value, { stream: true })
         const lines = chunk.split('\n')
+
         for (const line of lines) {
+          if (line.includes('stream completed')) {
+            setLoading(false)
+            return
+          }
           if (line.startsWith('data:')) {
             try {
               const jsonStr = line.slice(5)
@@ -199,23 +202,23 @@ export default function Index() {
                     }}
                     className="flex items-center text-purple-600 hover:text-purple-700 hover:bg-purple-50 rounded-full px-4 py-2 transition-all duration-300"
                     icon={
-                      <svg 
-                        className="w-5 h-5 mr-2 transition-transform group-hover:rotate-12" 
-                        fill="none" 
-                        viewBox="0 0 24 24" 
+                      <svg
+                        className="w-5 h-5 mr-2 transition-transform group-hover:rotate-12"
+                        fill="none"
+                        viewBox="0 0 24 24"
                         stroke="currentColor"
                       >
-                        <path 
-                          strokeLinecap="round" 
-                          strokeLinejoin="round" 
-                          strokeWidth={2} 
-                          d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" 
+                        <path
+                          strokeLinecap="round"
+                          strokeLinejoin="round"
+                          strokeWidth={2}
+                          d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"
                         />
-                        <path 
-                          strokeLinecap="round" 
-                          strokeLinejoin="round" 
-                          strokeWidth={2} 
-                          d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z" 
+                        <path
+                          strokeLinecap="round"
+                          strokeLinejoin="round"
+                          strokeWidth={2}
+                          d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"
                         />
                       </svg>
                     }
@@ -267,7 +270,7 @@ export default function Index() {
                     <DatePicker
                       className="w-full !bg-gray-50 hover:!bg-white focus:!bg-white transition-colors"
                       placeholder={`选择${isLunar ? '农历' : '公历'}出生日期`}
-                      format={isLunar ? 'YYYY年MM月DD日' : 'YYYY-MM-DD'}
+                      format={isLunar ? 'YYYY年MM月DD日' : 'YYYY年MM月DD日'}
                     />
                   </Form.Item>
 

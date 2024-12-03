@@ -236,7 +236,7 @@ export default function CorrelationAnalysis() {
     } catch (error) {
       console.error('Correlation analysis failed:', error)
     } finally {
-      setLoading(false)
+      // setLoading(false)
     }
   }
 

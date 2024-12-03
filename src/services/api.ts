@@ -54,6 +54,7 @@ interface AnalysisResponse {
   code: number
   message: string
   data: {
+    body: ReadableStream<Uint8Array>
     destiny_analysis: string
     fortune_prediction: string
     suggestions: string
@@ -62,15 +63,39 @@ interface AnalysisResponse {
 
 // API 接口定义
 export const destinyAPI = {
-  // 修改命理分析接口
-  analyze: async (data: AnalysisParams): Promise<AnalysisResponse> => {
-    return api.post('/api/destiny_analyze', data);
+  // 修改命理分析接口，使用 fetch
+  analyze: async (data: AnalysisParams): Promise<Response> => {
+    const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/destiny_analyze`, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify(data),
+    })
+
+    if (!response.ok) {
+      throw new Error('Analysis failed')
+    }
+
+    return response
   },
 
   // 关联分析接口
   analyzeCorrelation: async (data: any) => {
-    return api.post('/destiny/correlation', data);
+    const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/destiny/correlation`, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify(data),
+    })
+
+    if (!response.ok) {
+      throw new Error('Correlation analysis failed')
+    }
+
+    return response
   }
-};
+}
 
 export default api; 
