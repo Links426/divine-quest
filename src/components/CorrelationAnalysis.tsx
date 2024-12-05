@@ -1,7 +1,8 @@
 import { useState } from 'react'
 import { Form, Input, Button, Select, Collapse, Tag, Modal, Timeline, message } from 'antd'
 import { PlusOutlined, ClockCircleOutlined, StarOutlined, CompassOutlined, RightOutlined, HistoryOutlined } from '@ant-design/icons'
-import { destinyAPI } from '../services/api'
+import { destinyAPI, type CorrelationAnalysisParams } from '../services/api'
+import TypewriterModal from './TypewriterModal'
 
 const { Option } = Select
 const { Panel } = Collapse
@@ -25,7 +26,7 @@ const eventBOptions = [
 const promptTemplates = {
   eventA: {
     '更换工作': [
-      '我在2024年11月28日更换了一家制造业的工作，从销售转向了运营岗位',
+      '我2024年11月28日更换了一家制造业的工作，从销售转向了运营岗位',
       '我计划在今年年底更换一份收入更高的工作，目前在准备面试',
       '我即将从一家小公司跳槽到某知名互联网大厂',
     ],
@@ -45,7 +46,7 @@ const promptTemplates = {
   eventB: {
     '获得晋升': [
       '希望能在年底的晋升季获得主管职位',
-      '期待在明年Q1的绩效考核中得到晋升机会',
+      '期待在明年Q1的绩��中得到晋升机会',
     ],
     '收入提升': [
       '期望在新工作中薪资能提升30%以上',
@@ -64,7 +65,7 @@ const mockCorrelationHistory = [
     id: 1,
     date: '2024-03-20 15:30',
     eventA: '更换工作',
-    eventB: '获得晋升',
+    eventB: '得晋升',
     result: {
       correlation: '正相关 (85%)',
       analysis: '更换工作到新环境后，由于您的专业能力得到充分发挥，晋升机会显著提升...',
@@ -108,6 +109,9 @@ export default function CorrelationAnalysis() {
   const [isHistoryModalOpen, setIsHistoryModalOpen] = useState(false)
   const [selectedRecord, setSelectedRecord] = useState<any>(null)
   const [loading, setLoading] = useState(false)
+  const [streamContent, setStreamContent] = useState('')
+  const [isStreamComplete, setIsStreamComplete] = useState(true)
+  const [showTypewriter, setShowTypewriter] = useState(false)
 
   // 处理事件选项点击
   const handleEventClick = (event: string, field: 'eventA' | 'eventB') => {
@@ -221,22 +225,87 @@ export default function CorrelationAnalysis() {
   const handleSubmit = async (values: any) => {
     try {
       setLoading(true)
-      const response = await destinyAPI.analyzeCorrelation({
-        ...values,
-        timeRange: values.timeRange || 'month3',
-        useConstellation: values.useConstellation || 'yes',
-        useZodiac: values.useZodiac || 'yes',
-        analysisDepth: values.analysisDepth || 'normal',
-      })
+      setStreamContent('')
+      setIsStreamComplete(false)
 
-      if (response.success) {
-        message.success('分析完成！')
-        console.log('关联分析结果：', response.data)
+      const formattedValues: CorrelationAnalysisParams = {
+        event_list: [
+          {
+            description: values.eventA
+          },
+          {
+            description: values.eventB
+          }
+        ] as [
+            { description: string },
+            { description: string }
+          ],
+        analyze_options: {
+          time_range: values.timeRange?.toUpperCase() || 'MONTH3',
+          use_constellation: values.useConstellation === 'yes',
+          use_zodia: values.useZodiac === 'yes',
+          analyze_depth: values.analysisDepth?.toUpperCase() || 'NORMAL'
+        }
+      }
+      console.log(111, formattedValues)
+      const response = await destinyAPI.analyzeCorrelation(formattedValues)
+
+      if (response.body) {
+        setShowTypewriter(true)
+        handleStreamData(response.body)
+      }
+
+    } catch (error) {
+      setLoading(false)
+      setIsStreamComplete(true)
+      console.error('Correlation analysis failed:', error)
+      message.error('分析失败，请稍后重试')
+    }
+  }
+
+  // 添加流式数据处理函数
+  const handleStreamData = async (stream: ReadableStream<Uint8Array>) => {
+    const reader = stream.getReader()
+    const decoder = new TextDecoder()
+    let accumulated = ''
+
+    try {
+      while (true) {
+        const { done, value } = await reader.read()
+        if (done) {
+          setIsStreamComplete(true)
+          setStreamContent(accumulated)
+          setLoading(false)
+          break
+        }
+        const chunk = decoder.decode(value, { stream: true })
+        const lines = chunk.split('\n')
+
+        for (const line of lines) {
+          if (line.includes('stream completed')) {
+            setLoading(false)
+            setStreamContent(accumulated)
+            return
+          }
+          if (line.startsWith('data:')) {
+            try {
+              const jsonStr = line.slice(5)
+              const data = JSON.parse(jsonStr)
+              if (data.message) {
+                accumulated += data.message
+                setStreamContent(accumulated)
+              }
+            } catch (e) {
+              console.error('Error parsing JSON:', e)
+            }
+          }
+        }
       }
     } catch (error) {
-      console.error('Correlation analysis failed:', error)
-    } finally {
-      // setLoading(false)
+      console.error('Error reading stream:', error)
+      setLoading(false)
+      setIsStreamComplete(true)
+      message.error('读取数据流失败，请重试')
     }
   }
 
@@ -245,6 +314,45 @@ export default function CorrelationAnalysis() {
       <div className="flex justify-between items-center mb-8">
         <h2 className="text-2xl font-bold text-gray-800">事件关联分析</h2>
         <div className="flex items-center space-x-4">
+          <Button
+            type="default"
+            onClick={() => {
+              if (!streamContent.trim()) {
+                message.info('暂无上次分析结果');
+                return;
+              }
+              setShowTypewriter(true);
+            }}
+            className="flex items-center text-purple-600 hover:text-purple-700 hover:bg-purple-50 rounded-full px-4 py-2 transition-all duration-300"
+            icon={
+              <svg 
+                className="w-5 h-5 mr-2 transition-transform group-hover:rotate-12" 
+                fill="none" 
+                viewBox="0 0 24 24" 
+                stroke="currentColor"
+              >
+                <path 
+                  strokeLinecap="round" 
+                  strokeLinejoin="round" 
+                  strokeWidth={2} 
+                  d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" 
+                />
+                <path 
+                  strokeLinecap="round" 
+                  strokeLinejoin="round" 
+                  strokeWidth={2} 
+                  d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z" 
+                />
+              </svg>
+            }
+          >
+            <span className="relative">
+              查看上次结果
+              {streamContent && (
+                <span className="absolute -top-1 -right-1 w-2 h-2 bg-purple-500 rounded-full animate-pulse" />
+              )}
+            </span>
+          </Button>
           <Button
             type="text"
             onClick={showHistoryModal}
@@ -329,7 +437,7 @@ export default function CorrelationAnalysis() {
               >
                 <Select defaultValue="month3">
                   <Option value="month1">近一个月</Option>
-                  <Option value="month3">近三个月</Option>
+                  <Option value="month3">三个月</Option>
                   <Option value="month6">近半年</Option>
                   <Option value="year1">近一年</Option>
                 </Select>
@@ -426,8 +534,8 @@ export default function CorrelationAnalysis() {
                   <div
                     key={record.id}
                     className={`p-4 rounded-lg cursor-pointer transition-all ${selectedRecord?.id === record.id
-                        ? 'bg-purple-50 border-purple-200'
-                        : 'hover:bg-gray-50'
+                      ? 'bg-purple-50 border-purple-200'
+                      : 'hover:bg-gray-50'
                       }`}
                     onClick={() => showRecordDetail(record)}
                   >
@@ -481,6 +589,14 @@ export default function CorrelationAnalysis() {
           </div>
         </div>
       </Modal>
+
+      {/* 添加 TypewriterModal */}
+      <TypewriterModal
+        open={showTypewriter}
+        onClose={() => setShowTypewriter(false)}
+        content={streamContent}
+        isAnalyzing={!isStreamComplete}
+      />
     </div>
   )
 } 

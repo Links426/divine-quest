@@ -61,6 +61,32 @@ interface AnalysisResponse {
   }
 }
 
+// 关联性分析请求参数接口
+export interface CorrelationAnalysisParams {
+  event_list: [
+    {
+      description: string
+    },
+    {
+      description: string
+    },
+  ]
+  analyze_options: {
+    time_range: 'MONTH1' | 'MONTH3' | 'MONTH6' | 'YEAR1'
+    use_constellation: boolean
+    use_zodia: boolean
+    analyze_depth: 'SIMPLE' | 'NORMAL' | 'DEEP'
+  }
+  extra_info?: string
+}
+
+// 添加起名请求参数接口
+interface NamingParams {
+  last_name: string
+  gender: '男' | '女'
+  extra_info?: string
+}
+
 // API 接口定义
 export const destinyAPI = {
   // 修改命理分析接口，使用 fetch
@@ -80,9 +106,35 @@ export const destinyAPI = {
     return response
   },
 
-  // 关联分析接口
-  analyzeCorrelation: async (data: any) => {
-    const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/destiny/correlation`, {
+  // 修改关联分析接口
+  analyzeCorrelation: async (data: CorrelationAnalysisParams): Promise<Response> => {
+    const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/correlation_analyze`, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({
+        event_list: data.event_list,
+        analyze_options: {
+          time_range: data.analyze_options.time_range,
+          use_constellation: data.analyze_options.use_constellation,
+          use_zodia: data.analyze_options.use_zodia,
+          analyze_depth: data.analyze_options.analyze_depth
+        },
+        extra_info: data.extra_info
+      }),
+    })
+
+    if (!response.ok) {
+      throw new Error('Correlation analysis failed')
+    }
+
+    return response
+  },
+
+  // 添加智能起名接口
+  analyzeName: async (data: NamingParams): Promise<Response> => {
+    const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/name_oracle`, {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
@@ -91,7 +143,7 @@ export const destinyAPI = {
     })
 
     if (!response.ok) {
-      throw new Error('Correlation analysis failed')
+      throw new Error('Name analysis failed')
     }
 
     return response
