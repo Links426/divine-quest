@@ -41,7 +41,7 @@ const mockHistoryData = [
     date: '2024-03-10 09:15',
     result: {
       destiny: '财运昌隆，有意外之财...',
-      fortune: '投资机会较多��但需谨慎决策...',
+      fortune: '投资机会较多但需谨慎决策...',
       advice: '建议稳中求进，不要贪心冒进...',
     },
   },

@@ -3,11 +3,16 @@ import IwsLink from './IwsLink'
 import { useState } from 'react'
 import { useRouter } from 'next/router'
 import { router as routerList } from './../router'
+import { Button } from 'antd'
+import { UserOutlined } from '@ant-design/icons'
 
 export default function Header() {
   const router = useRouter()
   const [isOpen, setIsOpen] = useState(false)
   const currentRouter = routerList.find((e) => e.path === router.asPath)?.name
+
+  // TODO: 这里可以添加用户状态管理
+  const isLoggedIn = false // 之后可以从状态管理或 context 中获取
 
   return (
     <nav className="bg-white/80 backdrop-blur-md shadow-md sticky top-0 z-50">
@@ -41,10 +46,48 @@ export default function Header() {
             >
               关于我们
             </IwsLink>
+            
+            {/* 添加登录/用户按钮 */}
+            {isLoggedIn ? (
+              <Button 
+                type="text"
+                icon={<UserOutlined />}
+                className="flex items-center text-purple-600 hover:text-purple-700 hover:bg-purple-50 rounded-full px-4"
+                onClick={() => router.push('/dashboard')}
+              >
+                个人中心
+              </Button>
+            ) : (
+              <Button
+                type="primary"
+                className="flex items-center rounded-full px-6 bg-purple-600 hover:bg-purple-700 border-none"
+                onClick={() => router.push('/login')}
+              >
+                登录/注册
+              </Button>
+            )}
           </div>
 
           {/* 移动端菜单按钮 */}
-          <div className="md:hidden flex items-center">
+          <div className="md:hidden flex items-center space-x-4">
+            {/* 添加移动端登录按钮 */}
+            {isLoggedIn ? (
+              <Button 
+                type="text"
+                icon={<UserOutlined />}
+                className="flex items-center text-purple-600"
+                onClick={() => router.push('/dashboard')}
+              />
+            ) : (
+              <Button
+                type="primary"
+                className="rounded-full px-4 bg-purple-600 hover:bg-purple-700 border-none"
+                onClick={() => router.push('/login')}
+              >
+                登录
+              </Button>
+            )}
+            
             <button
               onClick={() => setIsOpen(!isOpen)}
               className="text-gray-500 hover:text-gray-600"
