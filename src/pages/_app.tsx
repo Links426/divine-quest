@@ -12,16 +12,19 @@ dayjs.locale('zh-cn')
 
 function MyApp({ Component, pageProps }: AppProps) {
   useEffect(() => {
-    // 检查是否已有 webid
-    console.log(document.cookie)
+    // 添加调试信息
+    console.log('API URL:', process.env.NEXT_PUBLIC_API_URL)
+    console.log('Current cookie:', document.cookie)
+    
     const webid = document.cookie.split('; ').find(row => row.startsWith('webid='))?.split('=')[1]
     if (!webid) {
       userAPI.getWebId({}).then((res) => {
-        console.log(document.cookie)
+        console.log('GetWebId response:', res)
+        console.log('Updated cookie:', document.cookie)
+      }).catch(error => {
+        console.error('GetWebId failed:', error)
       })
     }
-    // 如果没有，则调用创建接口
-
   }, [])
 
   return (
