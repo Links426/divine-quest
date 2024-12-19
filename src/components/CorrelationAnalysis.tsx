@@ -46,7 +46,7 @@ const promptTemplates = {
   eventB: {
     '获得晋升': [
       '希望能在年底的晋升季获得主管职位',
-      '期��在明年Q1的绩��中得到晋升机会',
+      '期待明年Q1的绩中得到晋升机会',
     ],
     '收入提升': [
       '期望在新工作中薪资能提升30%以上',
@@ -227,6 +227,7 @@ export default function CorrelationAnalysis() {
       setLoading(true)
       setStreamContent('')
       setIsStreamComplete(false)
+      setShowTypewriter(true)  // 立即显示 modal
 
       const formattedValues: CorrelationAnalysisParams = {
         event_list: [
@@ -240,19 +241,18 @@ export default function CorrelationAnalysis() {
           analyze_depth: values.analysisDepth?.toUpperCase() || 'NORMAL'
         }
       }
-
       const response = await destinyAPI.analyzeCorrelation(formattedValues)
-
       if (response.body) {
-        setShowTypewriter(true)
         handleStreamData(response.body)
+      } else {
+        throw new Error('Response body is null')
       }
 
     } catch (error) {
       setLoading(false)
       setIsStreamComplete(true)
       console.error('Correlation analysis failed:', error)
-      message.error('分析失败，请稍后重试')
+      message.error('分析失败，请重试')
     }
   }
 
@@ -282,14 +282,20 @@ export default function CorrelationAnalysis() {
           }
           if (line.startsWith('data:')) {
             try {
-              const jsonStr = line.slice(5)
+              // 添加数据验证和清理
+              const jsonStr = line.slice(5).trim()
+              // 跳过空字符串和非JSON格式的数据（如keep-alive）
+              if (!jsonStr || jsonStr === 'keep-alive' || !jsonStr.startsWith('{')) {
+                continue
+              }
               const data = JSON.parse(jsonStr)
-              if (data.message) {
+              if (data?.message) {
                 accumulated += data.message
                 setStreamContent(accumulated)
               }
             } catch (e) {
-              console.error('Error parsing JSON:', e)
+              console.warn('跳过无效JSON数据:', line)
+              continue // 继续处理下一行，而不是中断整个流程
             }
           }
         }
@@ -393,7 +399,7 @@ export default function CorrelationAnalysis() {
               required
             >
               <Input.TextArea
-                placeholder="请简要��述您想要分析关联性的第二件事"
+                placeholder="请简要描述您想要分析关联性的第二件事"
                 className="!bg-gray-50 hover:!bg-white focus:!bg-white transition-colors"
                 rows={3}
                 onFocus={() => setShowPrompts(false)}
@@ -507,7 +513,7 @@ export default function CorrelationAnalysis() {
         title={
           <div className="flex items-center space-x-2">
             <HistoryOutlined className="text-purple-600" />
-            <span>关联分析历史记录</span>
+            <span>关联分���历史记录</span>
           </div>
         }
         open={isHistoryModalOpen}

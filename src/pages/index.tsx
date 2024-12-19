@@ -148,7 +148,11 @@ export default function Index() {
           }
           if (line.startsWith('data:')) {
             try {
-              const jsonStr = line.slice(5)
+              const jsonStr = line.slice(5).trim()
+              // 跳过空字符串和非JSON格式的数据（如keep-alive）
+              if (!jsonStr || jsonStr === 'keep-alive' || !jsonStr.startsWith('{')) {
+                continue
+              }
               const data = JSON.parse(jsonStr)
               if (data.message) {
                 accumulated += data.message

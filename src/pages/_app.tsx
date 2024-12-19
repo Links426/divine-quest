@@ -15,8 +15,8 @@ function MyApp({ Component, pageProps }: AppProps) {
     // 添加调试信息
     console.log('API URL:', process.env.NEXT_PUBLIC_API_URL)
     console.log('Current cookie:', document.cookie)
-    
-    const webid = document.cookie.split('; ').find(row => row.startsWith('webid='))?.split('=')[1]
+
+    const webid = document.cookie
     if (!webid) {
       userAPI.getWebId({}).then((res) => {
         console.log('GetWebId response:', res)

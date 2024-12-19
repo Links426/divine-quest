@@ -61,17 +61,17 @@ interface NamingParams {
 export const destinyAPI = {
   // 命理分析
   analyze: (data: AnalysisParams) => {
-    return request.post('/api/destiny_analyze', data)
+    return request.postStream('/api/destiny_analyze', data)
   },
 
   // 关联分析
   analyzeCorrelation: (data: CorrelationAnalysisParams) => {
-    return request.post('/api/correlation_analyze', data)
+    return request.postStream('/api/correlation_analyze', data)
   },
 
   // 智能起名
   analyzeName: (data: NamingParams) => {
-    return request.post('/api/name_oracle', data)
+    return request.postStream('/api/name_oracle', data)
   },
 }
 

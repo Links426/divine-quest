@@ -15,7 +15,8 @@ export default function SmartNaming() {
       setLoading(true)
       setStreamContent('')
       setIsStreamComplete(false)
-
+      setShowTypewriter(true)
+      console.log(2222333)
       const formattedValues = {
         last_name: values.lastName,
         gender: values.gender === 'male' ? '男' : '女',
@@ -23,9 +24,9 @@ export default function SmartNaming() {
       }
 
       const response = await destinyAPI.analyzeName(formattedValues)
-
+      console.log(response, 1111)
+      console.log(2222)
       if (response.body) {
-        setShowTypewriter(true)
         handleStreamData(response.body)
       }
 
@@ -62,7 +63,11 @@ export default function SmartNaming() {
           }
           if (line.startsWith('data:')) {
             try {
-              const jsonStr = line.slice(5)
+              const jsonStr = line.slice(5).trim()
+              // 跳过空字符串和非JSON格式的数据（如keep-alive）
+              if (!jsonStr || jsonStr === 'keep-alive' || !jsonStr.startsWith('{')) {
+                continue
+              }
               const data = JSON.parse(jsonStr)
               if (data.message) {
                 accumulated += data.message
