@@ -1,7 +1,7 @@
 import { useState } from 'react'
 import { Form, Input, Button, Select, Collapse, Tag, Modal, Timeline, message } from 'antd'
 import { PlusOutlined, ClockCircleOutlined, StarOutlined, CompassOutlined, RightOutlined, HistoryOutlined } from '@ant-design/icons'
-import { destinyAPI, type CorrelationAnalysisParams } from '../services/api'
+import { destinyAPI, systemAPI, userAPI, type CorrelationAnalysisParams } from '../services/api'
 import TypewriterModal from './TypewriterModal'
 
 const { Option } = Select
@@ -46,7 +46,7 @@ const promptTemplates = {
   eventB: {
     '获得晋升': [
       '希望能在年底的晋升季获得主管职位',
-      '期待在明年Q1的绩��中得到晋升机会',
+      '期��在明年Q1的绩��中得到晋升机会',
     ],
     '收入提升': [
       '期望在新工作中薪资能提升30%以上',
@@ -230,16 +230,9 @@ export default function CorrelationAnalysis() {
 
       const formattedValues: CorrelationAnalysisParams = {
         event_list: [
-          {
-            description: values.eventA
-          },
-          {
-            description: values.eventB
-          }
-        ] as [
-            { description: string },
-            { description: string }
-          ],
+          { description: values.eventA },
+          { description: values.eventB }
+        ],
         analyze_options: {
           time_range: values.timeRange?.toUpperCase() || 'MONTH3',
           use_constellation: values.useConstellation === 'yes',
@@ -247,7 +240,7 @@ export default function CorrelationAnalysis() {
           analyze_depth: values.analysisDepth?.toUpperCase() || 'NORMAL'
         }
       }
-      console.log(111, formattedValues)
+
       const response = await destinyAPI.analyzeCorrelation(formattedValues)
 
       if (response.body) {
@@ -325,23 +318,23 @@ export default function CorrelationAnalysis() {
             }}
             className="flex items-center text-purple-600 hover:text-purple-700 hover:bg-purple-50 rounded-full px-4 py-2 transition-all duration-300"
             icon={
-              <svg 
-                className="w-5 h-5 mr-2 transition-transform group-hover:rotate-12" 
-                fill="none" 
-                viewBox="0 0 24 24" 
+              <svg
+                className="w-5 h-5 mr-2 transition-transform group-hover:rotate-12"
+                fill="none"
+                viewBox="0 0 24 24"
                 stroke="currentColor"
               >
-                <path 
-                  strokeLinecap="round" 
-                  strokeLinejoin="round" 
-                  strokeWidth={2} 
-                  d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" 
+                <path
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  strokeWidth={2}
+                  d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"
                 />
-                <path 
-                  strokeLinecap="round" 
-                  strokeLinejoin="round" 
-                  strokeWidth={2} 
-                  d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z" 
+                <path
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  strokeWidth={2}
+                  d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"
                 />
               </svg>
             }
@@ -400,7 +393,7 @@ export default function CorrelationAnalysis() {
               required
             >
               <Input.TextArea
-                placeholder="请简要描述您想要分析关联性的第二件事"
+                placeholder="请简要��述您想要分析关联性的第二件事"
                 className="!bg-gray-50 hover:!bg-white focus:!bg-white transition-colors"
                 rows={3}
                 onFocus={() => setShowPrompts(false)}

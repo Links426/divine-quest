@@ -78,7 +78,7 @@ export default function SmartNaming() {
       console.error('Error reading stream:', error)
       setLoading(false)
       setIsStreamComplete(true)
-      message.error('读取数据流失败，请重���')
+      message.error('读取数据流失败，请重试')
     }
   }
 
@@ -100,10 +100,10 @@ export default function SmartNaming() {
           }}
           className="flex items-center text-purple-600 hover:text-purple-700 hover:bg-purple-50 rounded-full px-4 py-2 transition-all duration-300"
           icon={
-            <svg 
-              className="w-5 h-5 mr-2 transition-transform group-hover:rotate-12" 
-              fill="none" 
-              viewBox="0 0 24 24" 
+            <svg
+              className="w-5 h-5 mr-2 transition-transform group-hover:rotate-12"
+              fill="none"
+              viewBox="0 0 24 24"
               stroke="currentColor"
             >
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
@@ -133,9 +133,9 @@ export default function SmartNaming() {
               name="lastName"
               rules={[{ required: true, message: '请输入姓氏' }]}
             >
-              <Input 
-                placeholder="请输入姓氏" 
-                className="!bg-white hover:!bg-gray-50 focus:!bg-white transition-colors text-lg h-12" 
+              <Input
+                placeholder="请输入姓氏"
+                className="!bg-white hover:!bg-gray-50 focus:!bg-white transition-colors text-lg h-12"
                 maxLength={2}
               />
             </Form.Item>

@@ -5,6 +5,7 @@ import { useRouter } from 'next/router'
 import { router as routerList } from './../router'
 import { Button } from 'antd'
 import { UserOutlined } from '@ant-design/icons'
+import { request } from './../utils/request'
 
 export default function Header() {
   const router = useRouter()
@@ -13,6 +14,11 @@ export default function Header() {
 
   // TODO: 这里可以添加用户状态管理
   const isLoggedIn = false // 之后可以从状态管理或 context 中获取
+
+  const handleLogout = () => {
+    request.clearCookie() // 清除存储的 cookie
+    // ... 其他登出逻辑
+  }
 
   return (
     <nav className="bg-white/80 backdrop-blur-md shadow-md sticky top-0 z-50">

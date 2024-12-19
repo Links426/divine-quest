@@ -1,9 +1,10 @@
 import { useState } from 'react'
 import { Form, Input, Button, message, Checkbox } from 'antd'
-import { UserOutlined, LockOutlined, MailOutlined, ArrowLeftOutlined } from '@ant-design/icons'
+import { UserOutlined, LockOutlined, MailOutlined, ArrowLeftOutlined, PhoneOutlined } from '@ant-design/icons'
 import Link from 'next/link'
 import { useRouter } from 'next/router'
 import { PasswordStrength } from '../components/PasswordStrength'
+import { destinyAPI, userAPI } from '../services/api'
 
 export default function Register() {
   const [form] = Form.useForm()
@@ -15,15 +16,15 @@ export default function Register() {
     { required: true, message: '请输入密码' },
     { min: 6, message: '密码至少6个字符' },
     {
-      validator: (_, value) => {
+      validator: (_: any, value: string) => {
         if (!value) return Promise.resolve()
-        
+
         const errors = []
         if (!/\d/.test(value)) errors.push('需包含数字')
         if (!/[a-z]/.test(value)) errors.push('需包含小写字母')
         if (!/[A-Z]/.test(value)) errors.push('需包含大写字母')
         if (!/[!@#$%^&*(),.?":{}|<>]/.test(value)) errors.push('需包含特殊字符')
-        
+
         return errors.length ? Promise.reject(errors.join('、')) : Promise.resolve()
       }
     }
@@ -32,37 +33,30 @@ export default function Register() {
   const handleRegister = async (values: any) => {
     try {
       setLoading(true)
-      // TODO: 调用注册 API
-      const { email, username, password } = values
-      
-      // 模拟API调用
-      await new Promise(resolve => setTimeout(resolve, 1000))
-      
-      // 模拟错误处理
-      if (Math.random() > 0.5) {
-        throw new Error('EMAIL_EXISTS')
-      }
-      
+
+      // 调用注册 API
+      const response = await userAPI.register({
+        Account: values.username,
+        Email: values.email,
+        Password: values.password,
+        Phone: values.phone,
+        // Phone 是可选的，如果有的话可以添加
+      })
+
+
       message.success({
         content: '注册成功！正在跳转...',
         duration: 2,
       })
-      
+
       // 延迟跳转
       setTimeout(() => {
         router.push('/login')
       }, 2000)
-      
+
     } catch (error: any) {
-      // 错误处理映射
-      const errorMessages = {
-        'EMAIL_EXISTS': '该邮箱已被注册',
-        'USERNAME_EXISTS': '用户名已被使用',
-        'INVALID_PASSWORD': '密码格式不正确',
-        'DEFAULT': '注册失败，请重试'
-      }
-      
-      message.error(errorMessages[error.message] || errorMessages.DEFAULT)
+      // 错误处理
+      message.error('注册失败，请重试')
     } finally {
       setLoading(false)
     }
@@ -119,7 +113,21 @@ export default function Register() {
               className="rounded-lg"
             />
           </Form.Item>
-
+          {/* 输入手机 */}
+          <Form.Item
+            name="phone"
+            rules={[
+              { required: true, message: '请输入手机号' },
+              { pattern: /^1[3-9]\d{9}$/, message: '请输入正确的手机号格式' }
+            ]}
+          >
+            <Input
+              prefix={<PhoneOutlined />}
+              placeholder="手机"
+              size="large"
+              className="rounded-lg"
+            />
+          </Form.Item>
           <Form.Item
             name="password"
             rules={passwordRules}
