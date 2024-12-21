@@ -12,6 +12,12 @@ import { useUser } from '../contexts/UserContext'
 
 dayjs.locale('zh-cn')
 
+// 添加接口定义
+interface CheckWebIdResponse {
+  web_id?: string;
+  // 其他可能的响应字段
+}
+
 // 创建一个新的组件来处理初始化逻辑
 function AppInitializer({ children }: { children: React.ReactNode }) {
   const { updateUserInfo } = useUser()
@@ -20,7 +26,7 @@ function AppInitializer({ children }: { children: React.ReactNode }) {
     const initApp = async () => {
       try {
         // 先检查当前 webid 是否有效
-        const checkResponse = await userAPI.checkWebId({})
+        const checkResponse = (await userAPI.checkWebId({})) as CheckWebIdResponse;
 
         if (!checkResponse.web_id) {
           // 获取新的 webid

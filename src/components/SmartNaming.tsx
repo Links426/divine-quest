@@ -19,7 +19,7 @@ export default function SmartNaming() {
       console.log(2222333)
       const formattedValues = {
         last_name: values.lastName,
-        gender: values.gender === 'male' ? '男' : '女',
+        gender: values.gender as "男" | "女",
         extra_info: values.extra_info
       }
 
@@ -64,7 +64,7 @@ export default function SmartNaming() {
           if (line.startsWith('data:')) {
             try {
               const jsonStr = line.slice(5).trim()
-              // 跳过空字符串和非JSON格式的数据（如keep-alive）
+              // 跳过���字符串和非JSON格式的数据（如keep-alive）
               if (!jsonStr || jsonStr === 'keep-alive' || !jsonStr.startsWith('{')) {
                 continue
               }
