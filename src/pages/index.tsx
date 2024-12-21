@@ -41,7 +41,7 @@ const mockHistoryData = [
     date: '2024-03-10 09:15',
     result: {
       destiny: '财运昌隆，有意外之财...',
-      fortune: '投资机会较多但需谨慎决策...',
+      fortune: '投资机会较多��需谨慎决策...',
       advice: '建议稳中求进，不要贪心冒进...',
     },
   },
@@ -72,6 +72,8 @@ export default function Index() {
       setLoading(true)
       setStreamContent('')
       setIsStreamComplete(false)
+      setShowTypewriter(true)
+
       const formattedValues = {
         birth_date: values.birth_date?.format('YYYY-MM-DD'),
         birth_time: values.birth_time?.format('HH:mm'),
@@ -83,20 +85,9 @@ export default function Index() {
         is_leap_month: isLunar ? values.isLeapMonth : undefined,
       }
 
-      const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/destiny_analyze`, {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify(formattedValues),
-      })
-
-      if (!response.ok) {
-        throw new Error('Analysis failed')
-      }
+      const response = await destinyAPI.analyze(formattedValues)
 
       if (response.body) {
-        setShowTypewriter(true)
         handleStreamData(response.body)
       }
 
@@ -138,34 +129,47 @@ export default function Index() {
           setIsStreamComplete(true)
           break
         }
+
         const chunk = decoder.decode(value, { stream: true })
+        // 按行分割，处理每一条 SSE 消息
         const lines = chunk.split('\n')
 
         for (const line of lines) {
-          if (line.includes('stream completed')) {
-            setLoading(false)
-            return
-          }
+          if (!line.trim() || line === '[DONE]') continue
+
           if (line.startsWith('data:')) {
             try {
               const jsonStr = line.slice(5).trim()
-              // 跳过空字符串和非JSON格式的数据（如keep-alive）
-              if (!jsonStr || jsonStr === 'keep-alive' || !jsonStr.startsWith('{')) {
-                continue
-              }
+
+
               const data = JSON.parse(jsonStr)
-              if (data.message) {
-                accumulated += data.message
+
+
+              // 检查是否是消息结束标志
+              if (data.o === 'add' || Array.isArray(data?.v)) {
+                setLoading(false)
+                setIsStreamComplete(true)
+                break
+              }
+
+              // 处理消息内容
+              if (data?.v) {
+                const message = data?.v
+                accumulated += message
+                console.log('Accumulated content:', accumulated) // 添加调试日志
                 setStreamContent(accumulated)
               }
             } catch (e) {
-              console.error('Error parsing JSON:', e)
+              console.error('Error parsing JSON:', e, 'Raw data:', line)
             }
           }
         }
       }
     } catch (error) {
       console.error('Error reading stream:', error)
+      setLoading(false)
+      setIsStreamComplete(true)
+      message.error('读取数据流失败，请重试')
     }
   }
 
@@ -587,7 +591,7 @@ export default function Index() {
                       深度分析
                     </h3>
                     <p className="text-indigo-800 group-hover:text-indigo-900 transition-colors">
-                      专业的八字命理分析与人生指导，助您明晰人生方向
+                      ���业的八字命理分析与人生指导，助您明晰人生方向
                     </p>
                   </div>
                 </div>
@@ -649,7 +653,7 @@ export default function Index() {
                       <div className="text-gray-600">{selectedRecord.result.fortune}</div>
                     </div>
                     <div className="bg-purple-50 p-4 rounded-lg">
-                      <div className="font-medium mb-2">建议</div>
+                      <div className="font-medium mb-2">建��</div>
                       <div className="text-gray-600">{selectedRecord.result.advice}</div>
                     </div>
                   </div>

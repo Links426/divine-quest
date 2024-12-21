@@ -57,6 +57,15 @@ interface NamingParams {
   extra_info?: string
 }
 
+// 添加用户信息接口类型
+interface UserInfo {
+  username: string
+  email: string
+  phone: string
+  avatar?: string
+  // ... 其他用户信息字段
+}
+
 // 命理相关的 API 分组
 export const destinyAPI = {
   // 命理分析
@@ -92,14 +101,26 @@ export const userAPI = {
   sendVerifyCode: (data: VerifyCodeParams) => {
     return request.post('/validator/api/send_verify_code', data)
   },
+
+  // 获取用户信息
+  getUserInfo: (data: any) => {
+    return request.post<UserInfo>('/usr/api/get_user_info', data)
+  },
+
+  // 检查 webid
+  checkWebId: (data: any) => {
+    return request.post('/sys/api/web_id', data)
+  },
+
+  // 获取新的 webid
   getWebId: (data: any) => {
     return request.post('/sys/api/create_info', data)
-  }
+  },
 }
 
 export const systemAPI = {
-  createWebInfo: () => {
-    return request.post('/sys/api/create_info')
+  createWebInfo: (data: any) => {
+    return request.post('/sys/api/create_info', data)
   },
 }
 

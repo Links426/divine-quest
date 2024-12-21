@@ -4,6 +4,7 @@ import { UserOutlined, LockOutlined, MailOutlined, GoogleOutlined, WechatOutline
 import Link from 'next/link'
 import { useRouter } from 'next/router'
 import { userAPI } from '../services/api'
+import { useUser } from '../contexts/UserContext'
 
 const { TabPane } = Tabs
 
@@ -14,6 +15,7 @@ export default function Login() {
   const [activeTab, setActiveTab] = useState('account')
   const router = useRouter()
   const [countdown, setCountdown] = useState(0)
+  const { updateUserInfo } = useUser()
 
   // 验证输入类型的函数
   const getInputType = (value: string): 'phone' | 'email' | null => {
@@ -66,6 +68,9 @@ export default function Login() {
         tag: inputType === 'email' ? 2 : 3
       })
 
+      // 登录成功后更新用户信息
+      await updateUserInfo()
+      
       message.success('登录成功！')
       router.push('/')
     } catch (error) {

@@ -6,18 +6,19 @@ import { router as routerList } from './../router'
 import { Button } from 'antd'
 import { UserOutlined } from '@ant-design/icons'
 import { request } from './../utils/request'
+import { useUser } from '../contexts/UserContext'
+import { message } from 'antd'
 
 export default function Header() {
+  const { userInfo, isLoggedIn, logout } = useUser()
   const router = useRouter()
   const [isOpen, setIsOpen] = useState(false)
   const currentRouter = routerList.find((e) => e.path === router.asPath)?.name
 
-  // TODO: 这里可以添加用户状态管理
-  const isLoggedIn = false // 之后可以从状态管理或 context 中获取
-
   const handleLogout = () => {
-    request.clearCookie() // 清除存储的 cookie
-    // ... 其他登出逻辑
+    logout()
+    router.push('/login')
+    message.success('已退出登录')
   }
 
   return (
@@ -52,17 +53,26 @@ export default function Header() {
             >
               关于我们
             </IwsLink>
-            
-            {/* 添加登录/用户按钮 */}
+
+            {/* 添加登���/用户按钮 */}
             {isLoggedIn ? (
-              <Button 
-                type="text"
-                icon={<UserOutlined />}
-                className="flex items-center text-purple-600 hover:text-purple-700 hover:bg-purple-50 rounded-full px-4"
-                onClick={() => router.push('/dashboard')}
-              >
-                个人中心
-              </Button>
+              <div className="flex items-center space-x-2">
+                <Button
+                  type="text"
+                  icon={<UserOutlined />}
+                  className="flex items-center text-purple-600 hover:text-purple-700 hover:bg-purple-50 rounded-full px-4"
+                  onClick={() => router.push('/dashboard')}
+                >
+                  {userInfo?.username || '用户'}
+                </Button>
+                <Button
+                  type="text"
+                  className="hover:text-red-500"
+                  onClick={handleLogout}
+                >
+                  退出
+                </Button>
+              </div>
             ) : (
               <Button
                 type="primary"
@@ -78,7 +88,7 @@ export default function Header() {
           <div className="md:hidden flex items-center space-x-4">
             {/* 添加移动端登录按钮 */}
             {isLoggedIn ? (
-              <Button 
+              <Button
                 type="text"
                 icon={<UserOutlined />}
                 className="flex items-center text-purple-600"
@@ -93,7 +103,7 @@ export default function Header() {
                 登录
               </Button>
             )}
-            
+
             <button
               onClick={() => setIsOpen(!isOpen)}
               className="text-gray-500 hover:text-gray-600"
